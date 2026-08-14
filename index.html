@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
+
+<title>Check Live</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden !important;
+
+    background: #fff;
+    overscroll-behavior: none;
+}
+
+body {
+    position: fixed;
+
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+
+/* =========================
+   WEBVIEW
+========================= */
+
+.webview {
+    position: fixed;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: var(--screen-height);
+
+    overflow: hidden !important;
+
+    background: #fff;
+    overscroll-behavior: none;
+}
+
+
+/* =========================
+   WEBSITE
+========================= */
+
+iframe {
+    position: absolute;
+
+    left: 0;
+    top: -25%;
+
+    width: 100%;
+    height: 500%;
+
+    border: 0;
+
+    display: block;
+
+    overflow: hidden !important;
+
+    overscroll-behavior: none;
+}
+
+
+/* =========================
+   FIXED OVERLAY
+========================= */
+
+.hide-bottom {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: var(--overlay-top);
+
+    height: calc(
+        var(--screen-height) - var(--overlay-top)
+    );
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #fbfcff 100%
+        );
+
+    z-index: 9999;
+
+    overflow: hidden;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    padding:
+        clamp(6px, 1.4vh, 13px)
+        clamp(9px, 4vw, 20px)
+        7px;
+
+    pointer-events: none;
+
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+
+/* =========================
+   2FA INFORMATION
+========================= */
+
+.twofa-info {
+    width: 100%;
+
+    text-align: center;
+
+    flex: 0 0 auto;
+
+    /*
+     * একটু উপরে রাখা হয়েছে
+     */
+    margin-top: -3px;
+
+    margin-bottom:
+        clamp(8px, 1.8vh, 13px);
+}
+
+.twofa-title {
+    font-family: Arial, sans-serif;
+
+    font-size:
+        clamp(25px, 4.5vw, 19px);
+
+    line-height: 2;
+
+    font-weight: 900;
+
+    letter-spacing: 0.4px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff006e,
+            #8338ec,
+            #3a86ff
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+
+    /*
+     * দুই লাইনের মাঝে বেশি space
+     */
+    margin-bottom: 12px;
+
+    white-space: nowrap;
+}
+
+.twofa-description {
+    width: 100%;
+
+    font-family: Arial, sans-serif;
+
+    font-size:
+        clamp(9px, 3vw, 12px);
+
+    line-height: 1.3;
+
+    font-weight: 500;
+
+    color: #6b7280;
+
+    text-align: center;
+
+    white-space: nowrap;
+}
+
+
+/* =========================
+   ACTION ROW
+========================= */
+
+.action-row {
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 0;
+
+    flex: 0 0 auto;
+
+    margin-bottom:
+        clamp(8px, 1.6vh, 12px);
+}
+
+
+/* =========================
+   CREATOR BUTTON BOX
+========================= */
+
+.creator-mini {
+    width: 50%;
+
+    min-width: 0;
+
+    flex: 0 0 50%;
+
+    text-align: left;
+
+    font-family: Arial, sans-serif;
+
+    line-height: 1.15;
+
+    overflow: hidden;
+
+    /*
+     * Button-style box
+     */
+    padding:
+        clamp(7px, 1.8vw, 10px)
+        clamp(8px, 2.5vw, 13px);
+
+    border-radius:
+        clamp(7px, 2vw, 11px);
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8f9ff,
+            #ffffff
+        );
+
+    border: 1px solid #e5e7eb;
+
+    box-shadow:
+        0 4px 12px
+        rgba(31, 41, 55, 0.07);
+
+    position: relative;
+}
+
+
+/* Small colorful line */
+
+.creator-mini::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 4px;
+    height: 100%;
+
+    border-radius:
+        8px 0 0 8px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ff006e,
+            #8338ec,
+            #3a86ff
+        );
+}
+
+
+.creator-mini-title {
+    font-size:
+        clamp(9px, 2.8vw, 12px);
+
+    font-weight: 500;
+
+    color: #6b7280;
+
+    white-space: nowrap;
+}
+
+.creator-mini-title strong {
+    color: #111827;
+
+    font-weight: 800;
+}
+
+.creator-mini-text {
+    margin-top: 4px;
+
+    font-size:
+        clamp(7.5px, 2.3vw, 10px);
+
+    color: #9ca3af;
+
+    font-weight: 500;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================
+   COPY BUTTON
+========================= */
+
+.copy-button {
+    width: 50%;
+
+    flex: 0 0 50%;
+
+    height:
+        clamp(43px, 9vw, 43px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-family: Arial, sans-serif;
+
+    font-size:
+        clamp(10px, 3vw, 13px);
+
+    font-weight: 900;
+
+    letter-spacing: 1.2px;
+
+    color: #fff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff006e 0%,
+            #8338ec 48%,
+            #3a86ff 100%
+        );
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 5px 16px
+        rgba(131, 56, 236, 0.28),
+
+        0 4px 12px
+        rgba(255, 0, 110, 0.22);
+
+    pointer-events: none;
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    white-space: nowrap;
+}
+
+
+/* =========================
+   PROFESSIONAL ICON
+========================= */
+
+.creator-icon {
+    width:
+        clamp(40px, 11vw, 52px);
+
+    height:
+        clamp(40px, 11vw, 52px);
+
+    min-width: 40px;
+    min-height: 40px;
+
+    max-width: 52px;
+    max-height: 52px;
+
+    flex: 0 0 auto;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #111827,
+            #374151
+        );
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+
+    margin-bottom:
+        clamp(5px, 1.2vh, 8px);
+
+    box-shadow:
+        0 6px 18px
+        rgba(0,0,0,0.16);
+}
+
+
+/* Person Head */
+
+.creator-icon::before {
+    content: "";
+
+    position: absolute;
+
+    width: 28%;
+    height: 28%;
+
+    min-width: 11px;
+    min-height: 11px;
+
+    max-width: 15px;
+    max-height: 15px;
+
+    background: #fff;
+
+    border-radius: 50%;
+
+    top: 18%;
+}
+
+
+/* Person Body */
+
+.creator-icon::after {
+    content: "";
+
+    position: absolute;
+
+    width: 50%;
+    height: 27%;
+
+    min-width: 21px;
+    min-height: 10px;
+
+    max-width: 27px;
+    max-height: 14px;
+
+    background: #fff;
+
+    border-radius:
+        15px 15px 7px 7px;
+
+    bottom: 16%;
+}
+
+
+/* =========================
+   BRAND NAME
+========================= */
+
+.brand-name {
+    width: 100%;
+
+    flex: 0 0 auto;
+
+    font-family: Arial, sans-serif;
+
+    font-size:
+        clamp(16px, 5.2vw, 22px);
+
+    line-height: 1.15;
+
+    font-weight: 800;
+
+    color: #111827;
+
+    text-align: center;
+
+    letter-spacing: 0.2px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    margin-bottom: 3px;
+}
+
+
+/* =========================
+   CREATOR
+========================= */
+
+.creator-name {
+    width: 100%;
+
+    flex: 0 0 auto;
+
+    font-family: Arial, sans-serif;
+
+    font-size:
+        clamp(10px, 3vw, 13px);
+
+    line-height: 1.2;
+
+    font-weight: 500;
+
+    color: #6b7280;
+
+    text-align: center;
+
+    white-space: nowrap;
+}
+
+.creator-name strong {
+    color: #111827;
+
+    font-weight: 700;
+}
+
+
+/* =========================
+   DIVIDER
+========================= */
+
+.divider {
+    width: 75%;
+
+    height: 1px;
+
+    flex: 0 0 auto;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d7dbe5,
+            transparent
+        );
+
+    margin:
+        clamp(6px, 1.2vh, 10px)
+        0
+        clamp(5px, 1vh, 8px);
+}
+
+
+/* =========================
+   TERMS CARD
+========================= */
+
+.terms-card {
+    width: 100%;
+
+    max-width: 450px;
+
+    flex: 0 0 auto;
+
+    position: relative;
+
+    padding:
+        clamp(7px, 1.5vh, 12px)
+        clamp(10px, 3vw, 15px);
+
+    border-radius:
+        clamp(10px, 2.5vw, 14px);
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8f9ff,
+            #ffffff
+        );
+
+    border: 1px solid #e7e9f1;
+
+    box-shadow:
+        0 5px 18px
+        rgba(31, 41, 55, 0.08);
+
+    overflow: hidden;
+}
+
+
+/* Colorful top border */
+
+.terms-card::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 3px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff006e,
+            #8338ec,
+            #3a86ff,
+            #00c6ff
+        );
+}
+
+
+/* =========================
+   TERMS TITLE
+========================= */
+
+.terms-title {
+    width: 100%;
+
+    font-family: Arial, sans-serif;
+
+    font-size:
+        clamp(10px, 3.2vw, 13px);
+
+    line-height: 1.2;
+
+    font-weight: 800;
+
+    color: #374151;
+
+    text-align: center;
+
+    margin-bottom: 6px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.8px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================
+   TERMS
+========================= */
+
+.terms {
+    width: 100%;
+
+    font-family: Arial, sans-serif;
+
+    font-size:
+        clamp(8.5px, 2.6vw, 11px);
+
+    line-height: 1.4;
+
+    color: #6b7280;
+
+    text-align: center;
+}
+
+.terms p {
+    margin:
+        clamp(2px, 0.4vh, 4px)
+        0;
+}
+
+
+/* =========================
+   COPYRIGHT
+========================= */
+
+.copyright {
+    width: 100%;
+
+    flex: 0 0 auto;
+
+    margin-top:
+        clamp(5px, 1vh, 7px);
+
+    font-family: Arial, sans-serif;
+
+    font-size:
+        clamp(7px, 2vw, 9px);
+
+    line-height: 1.2;
+
+    color: #9ca3af;
+
+    text-align: center;
+
+    white-space: nowrap;
+}
+
+
+/* =========================
+   SMALL HEIGHT
+========================= */
+
+@media (max-height: 600px) {
+
+    .hide-bottom {
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+    .twofa-info {
+        margin-top: -4px;
+        margin-bottom: 6px;
+    }
+
+    .twofa-title {
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .twofa-description {
+        font-size: 8px;
+    }
+
+    .action-row {
+        margin-bottom: 6px;
+    }
+
+    .copy-button {
+        height: 38px;
+    }
+
+    .creator-mini {
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    .creator-icon {
+        width: 38px;
+        height: 38px;
+
+        min-width: 38px;
+        min-height: 38px;
+
+        margin-bottom: 4px;
+    }
+
+    .divider {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .terms-card {
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    .terms p {
+        margin: 1px 0;
+    }
+}
+
+
+/* =========================
+   VERY NARROW PHONE
+========================= */
+
+@media (max-width: 320px) {
+
+    .hide-bottom {
+        padding-left: 7px;
+        padding-right: 7px;
+    }
+
+    .twofa-title {
+        font-size: 12px;
+    }
+
+    .twofa-description {
+        font-size: 7px;
+    }
+
+    .creator-mini {
+        padding-left: 8px;
+        padding-right: 6px;
+    }
+
+    .creator-mini-title {
+        font-size: 8px;
+    }
+
+    .creator-mini-text {
+        font-size: 7px;
+    }
+
+    .copy-button {
+        height: 36px;
+
+        font-size: 9px;
+
+        letter-spacing: 0.8px;
+    }
+
+    .brand-name {
+        font-size: 15px;
+    }
+
+    .creator-name {
+        font-size: 9px;
+    }
+
+    .terms-title {
+        font-size: 8px;
+    }
+
+    .terms {
+        font-size: 7.5px;
+    }
+
+    .copyright {
+        font-size: 6.5px;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="webview">
+
+
+    <!-- =====================
+         WEBSITE
+    ====================== -->
+
+    <iframe
+        src="https://www.twofa.co"
+        allow="clipboard-read; clipboard-write"
+        scrolling="no"
+        referrerpolicy="strict-origin-when-cross-origin">
+    </iframe>
+
+
+    <!-- =====================
+         FIXED OVERLAY
+    ====================== -->
+
+    <div class="hide-bottom">
+
+
+        <!-- =====================
+             2FA INFORMATION
+        ====================== -->
+
+        <div class="twofa-info">
+
+            <div class="twofa-title">
+                Two-Factor Authentication
+            </div>
+
+            <div class="twofa-description">
+                Enter your verification code securely to complete authentication.
+            </div>
+
+        </div>
+
+
+        <!-- =====================
+             CREATOR + COPY
+        ====================== -->
+
+        <div class="action-row">
+
+
+            <!-- Creator Button Box -->
+
+            <div class="creator-mini">
+
+                <div class="creator-mini-title">
+                    Creator :
+                    <strong>Md Tamim</strong>
+                </div>
+
+                <div class="creator-mini-text">
+                    Secure • Professional • Reliable
+                </div>
+
+            </div>
+
+
+            <!-- Copy Button -->
+
+            <div class="copy-button">
+                COPY
+            </div>
+
+
+        </div>
+
+
+        <!-- =====================
+             PROFESSIONAL ICON
+        ====================== -->
+
+        <div class="creator-icon"></div>
+
+
+        <!-- =====================
+             BRAND
+        ====================== -->
+
+        <div class="brand-name">
+            Trending Academy Limited
+        </div>
+
+
+        <!-- =====================
+             CREATOR
+        ====================== -->
+
+        <div class="creator-name">
+             💠 <strong>Build Skills | Work Hard | Succeed.</strong>
+        </div>
+
+
+        <!-- =====================
+             DIVIDER
+        ====================== -->
+
+        <div class="divider"></div>
+
+
+        <!-- =====================
+             TERMS
+        ====================== -->
+
+        <div class="terms-card">
+
+            <div class="terms-title">
+                Terms &amp; Conditions
+            </div>
+
+            <div class="terms">
+
+                <p>
+                    This service is provided for
+                    educational and legitimate purposes only.
+                </p>
+
+                <p>
+                    Users are responsible for using the service
+                    only with accounts and credentials they own
+                    or are authorized to access.
+                </p>
+
+                <p>
+                    Do not use this service for unauthorized
+                    access, abuse, fraud, or any illegal activity.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================
+             COPYRIGHT
+        ====================== -->
+
+        <div class="copyright">
+            © 2026 Trending Academy Limited. All rights reserved.
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+(function () {
+
+    /*
+     * Screen-এর আসল height
+     */
+
+    const screenHeight = window.innerHeight;
+
+    document.documentElement.style.setProperty(
+        '--screen-height',
+        screenHeight + 'px'
+    );
+
+
+    /*
+     * Overlay screen-এর 38%
+     * থেকে শুরু হবে।
+     */
+
+    const overlayTop = screenHeight * 0.31;
+
+    document.documentElement.style.setProperty(
+        '--overlay-top',
+        overlayTop + 'px'
+    );
+
+})();
+
+</script>
+
+</body>
+</html>
